@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Legal Billing Email Summarizer",
+  "version": "1.0.0",
+  "description": "Automatically capture and summarize emails for legal billing",
+  "permissions": ["activeTab", "storage", "scripting"],
+  "host_permissions": ["https://mail.google.com/*", "http://localhost:8000/*", "http://127.0.0.1:8000/*"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Legal Billing Summarizer"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["popup.html", "styles.css"],
+      "matches": ["https://mail.google.com/*"]
+    }
+  ]
+}

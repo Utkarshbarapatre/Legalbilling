@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            width: 350px;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            font-size: 24px;
+            color: #3b82f6;
+            margin-bottom: 5px;
+        }
+        .status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .connected { background: #10b981; }
+        .disconnected { background: #ef4444; }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        .settings {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .setting-item {
+            margin-bottom: 15px;
+        }
+        .setting-item label {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+        .setting-item input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .current-email {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .current-email h4 {
+            margin: 0 0 8px 0;
+            color: #92400e;
+            font-size: 14px;
+        }
+        .current-email p {
+            margin: 0;
+            font-size: 12px;
+            color: #78350f;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">⚖️ Legal Billing</div>
+        <div>Email Summarizer</div>
+    </div>
+
+    <div class="status">
+        <div style="display: flex; align-items: center;">
+            <div id="server-status" class="status-dot disconnected"></div>
+            <span>Server Connection</span>
+        </div>
+        <span id="server-text">Disconnected</span>
+    </div>
+
+    <div class="stats">
+        <div class="stat-item">
+            <div id="emails-captured" class="stat-number">0</div>
+            <div class="stat-label">Emails Captured</div>
+        </div>
+        <div class="stat-item">
+            <div id="summaries-generated" class="stat-number">0</div>
+            <div class="stat-label">Summaries</div>
+        </div>
+    </div>
+
+    <div id="current-email" class="current-email" style="display: none;">
+        <h4>Current Email</h4>
+        <p id="current-subject"></p>
+    </div>
+
+    <button id="capture-email" class="btn btn-primary">
+        📧 Capture Current Email
+    </button>
+
+    <button id="auto-capture" class="btn btn-secondary">
+        🔄 Toggle Auto-Capture
+    </button>
+
+    <button id="generate-summaries" class="btn btn-success">
+        🤖 Generate Summaries
+    </button>
+
+    <button id="open-dashboard" class="btn btn-secondary">
+        📊 Open Dashboard
+    </button>
+
+    <div class="settings">
+        <div class="setting-item">
+            <label>Server URL</label>
+            <input type="text" id="server-url" value="http://127.0.0.1:8000" />
+        </div>
+        <div class="setting-item">
+            <label>Auto-capture sent emails</label>
+            <input type="checkbox" id="auto-capture-sent" checked />
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

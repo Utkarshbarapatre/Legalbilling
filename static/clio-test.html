@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clio API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Clio API Connection Test</h1>
+    
+    <div class="test-section">
+        <h3>1. Test API Connection</h3>
+        <button onclick="testConnection()">Test Connection</button>
+        <div id="connection-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. Get User Info</h3>
+        <button onclick="getUserInfo()">Get User Info</button>
+        <div id="user-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. Create Test Time Entry</h3>
+        <button onclick="createTestEntry()">Create Test Entry</button>
+        <div id="entry-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. Get Matters</h3>
+        <button onclick="getMatters()">Get Matters</button>
+        <div id="matters-result"></div>
+    </div>
+
+    <script>
+        async function testConnection() {
+            const result = document.getElementById('connection-result');
+            result.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('/api/clio/test');
+                const data = await response.json();
+                
+                result.className = data.connected ? 'success' : 'error';
+                result.innerHTML = `
+                    <h4>Connection Status: ${data.connected ? 'Connected' : 'Failed'}</h4>
+                    <p>Message: ${data.message}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                result.className = 'error';
+                result.innerHTML = `<h4>Error:</h4><p>${error.message}</p>`;
+            }
+        }
+        
+        async function getUserInfo() {
+            const result = document.getElementById('user-result');
+            result.innerHTML = 'Getting user info...';
+            
+            try {
+                const response = await fetch('/api/clio/status');
+                const data = await response.json();
+                
+                result.className = data.connected ? 'success' : 'error';
+                result.innerHTML = `
+                    <h4>User Info:</h4>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                result.className = 'error';
+                result.innerHTML = `<h4>Error:</h4><p>${error.message}</p>`;
+            }
+        }
+        
+        async function createTestEntry() {
+            const result = document.getElementById('entry-result');
+            result.innerHTML = 'Creating test entry...';
+            
+            try {
+                const response = await fetch('/api/clio/push-entries', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                result.className = data.success ? 'success' : 'error';
+                result.innerHTML = `
+                    <h4>Time Entry Result:</h4>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                result.className = 'error';
+                result.innerHTML = `<h4>Error:</h4><p>${error.message}</p>`;
+            }
+        }
+        
+        async function getMatters() {
+            const result = document.getElementById('matters-result');
+            result.innerHTML = 'Getting matters...';
+            
+            try {
+                const response = await fetch('/api/clio/matters');
+                const data = await response.json();
+                
+                result.className = 'success';
+                result.innerHTML = `
+                    <h4>Matters (${data.matters?.length || 0}):</h4>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                result.className = 'error';
+                result.innerHTML = `<h4>Error:</h4><p>${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

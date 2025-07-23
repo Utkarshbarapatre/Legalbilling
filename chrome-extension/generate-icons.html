@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Icon Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .icon-preview { margin: 20px 0; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        button { padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Chrome Extension Icon Generator</h1>
+    <p>This will generate the required icon files for the Chrome extension.</p>
+    
+    <div class="icon-preview">
+        <h3>Icon Preview:</h3>
+        <canvas id="icon16" width="16" height="16"></canvas>
+        <canvas id="icon48" width="48" height="48"></canvas>
+        <canvas id="icon128" width="128" height="128"></canvas>
+    </div>
+    
+    <button onclick="generateIcons()">Generate Icons</button>
+    <button onclick="downloadIcons()">Download All Icons</button>
+    
+    <div id="download-links"></div>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#3b82f6';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Scale emoji/text based on size
+            const fontSize = size * 0.6;
+            ctx.font = `${fontSize}px Arial`;
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Draw gavel emoji or text
+            if (size >= 32) {
+                ctx.fillText('⚖️', size/2, size/2);
+            } else {
+                // For small sizes, use simple text
+                ctx.font = `${fontSize * 0.8}px Arial`;
+                ctx.fillText('LB', size/2, size/2);
+            }
+        }
+        
+        function generateIcons() {
+            const sizes = [16, 48, 128];
+            sizes.forEach(size => {
+                const canvas = document.getElementById(`icon${size}`);
+                drawIcon(canvas, size);
+            });
+        }
+        
+        function downloadIcons() {
+            const sizes = [16, 48, 128];
+            const downloadLinks = document.getElementById('download-links');
+            downloadLinks.innerHTML = '<h3>Right-click and "Save As" each icon:</h3>';
+            
+            sizes.forEach(size => {
+                const canvas = document.getElementById(`icon${size}`);
+                const link = document.createElement('a');
+                link.download = `icon${size}.png`;
+                link.href = canvas.toDataURL();
+                link.textContent = `Download icon${size}.png`;
+                link.style.display = 'block';
+                link.style.margin = '5px 0';
+                downloadLinks.appendChild(link);
+            });
+        }
+        
+        // Generate icons on page load
+        window.onload = generateIcons;
+    </script>
+</body>
+</html>

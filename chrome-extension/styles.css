@@ -1,0 +1,24 @@
+/* Chrome extension styles for Gmail integration */
+#legal-billing-capture {
+  transition: all 0.2s ease;
+}
+
+#legal-billing-capture:hover {
+  background: #2563eb !important;
+  transform: translateY(-1px);
+}
+
+.legal-billing-notification {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
