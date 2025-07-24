@@ -18,9 +18,9 @@ class Settings(BaseSettings):
     clio_redirect_uri: str = "http://127.0.0.1:8000/callback"
     
     # Application Configuration
-    secret_key: str = "your-secret-key-change-in-production"
-    debug: bool = False
-    port: int = 8000
+    secret_key: str = os.getenv("SECRET_KEY", "oU9X3RQYFs2xx68UDTnAmcxqE-ZhJOBetRYumTol8Q")
+    debug: bool = os.getenv("DEBUG", "false").lower() == "true"
+    port: int = int(os.getenv("PORT", "8000"))
     
     # Database Configuration
     database_url: str = "sqlite:///./legal_billing.db"
