@@ -162,8 +162,10 @@ async def health_check():
         "status": "healthy",
         "service": "Legal Billing Email Summarizer",
         "version": "1.0.0",
+        "host": "127.0.0.1",
         "port": os.getenv("PORT", "8000"),
-        "environment": os.getenv("RAILWAY_ENVIRONMENT", "development")
+        "environment": os.getenv("RAILWAY_ENVIRONMENT", "development"),
+        "redirect_uri": "http://127.0.0.1:8000/callback"
     }
 
 @app.get("/config-test")
