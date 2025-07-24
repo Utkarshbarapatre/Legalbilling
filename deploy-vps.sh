@@ -1,55 +1,46 @@
 #!/bin/bash
 
-# VPS deployment script
-echo "Setting up Legal Billing Email Summarizer on VPS..."
+echo "🚂 Fixed Railway Deployment"
+echo "=========================="
 
-# Update system
-sudo apt update && sudo apt upgrade -y
+# Check if railway CLI is installed
+if ! command -v railway &> /dev/null; then
+    echo "Installing Railway CLI..."
+    npm install -g @railway/cli
+fi
 
-# Install Python 3.11
-sudo apt install python3.11 python3.11-venv python3.11-pip -y
+# Login to Railway
+echo "Please login to Railway..."
+railway login
 
-# Create application directory
-sudo mkdir -p /opt/legal-billing
-sudo chown $USER:$USER /opt/legal-billing
-cd /opt/legal-billing
+# Initialize project if not already done
+if [ ! -f "railway.toml" ]; then
+    echo "Initializing Railway project..."
+    railway init
+fi
 
-# Clone repository (replace with your repo URL)
-git clone https://github.com/your-username/legal-billing-summarizer.git .
+# Set environment variables
+echo "Setting basic environment variables..."
+railway variables set PORT=8000
+railway variables set RAILWAY_ENVIRONMENT=production
 
-# Create virtual environment
-python3.11 -m venv venv
-source venv/bin/activate
+# Deploy
+echo "Deploying to Railway..."
+railway up
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Copy environment file
-cp .env.example .env
-echo "Please edit .env file with your API keys"
-
-# Create systemd service
-sudo tee /etc/systemd/system/legal-billing.service > /dev/null <<EOF
-[Unit]
-Description=Legal Billing Email Summarizer
-After=network.target
-
-[Service]
-Type=simple
-User=$USER
-WorkingDirectory=/opt/legal-billing
-Environment=PATH=/opt/legal-billing/venv/bin
-ExecStart=/opt/legal-billing/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# Enable and start service
-sudo systemctl daemon-reload
-sudo systemctl enable legal-billing
-sudo systemctl start legal-billing
-
-echo "Deployment complete!"
-echo "Your app should be running on port 8000"
+echo ""
+echo "✅ Deployment initiated!"
+echo ""
+echo "📝 Important next steps:"
+echo "1. Go to your Railway dashboard"
+echo "2. Set these environment variables:"
+echo "   - OPENAI_API_KEY=your_openai_key"
+echo "   - CLIO_CLIENT_ID=your_clio_client_id"
+echo "   - CLIO_CLIENT_SECRET=your_clio_client_secret"
+echo "   - SECRET_KEY=$(openssl rand -base64 32)"
+echo ""
+echo "3. Get your Railway URL from the dashboard"
+echo "4. Update Clio redirect URI: https://your-app.up.railway.app/callback"
+echo "5. Test your deployment at the Railway URL"
+echo ""
+echo "🔗 Railway Dashboard: https://railway.app/dashboard"
