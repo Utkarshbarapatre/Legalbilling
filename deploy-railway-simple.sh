@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "🚂 Simple Railway Deployment"
-echo "============================"
+echo "🚂 Fixed Railway Deployment"
+echo "=========================="
 
 # Check if railway CLI is installed
 if ! command -v railway &> /dev/null; then
@@ -13,27 +13,34 @@ fi
 echo "Please login to Railway..."
 railway login
 
-# Initialize project
-echo "Initializing Railway project..."
-railway init
+# Initialize project if not already done
+if [ ! -f "railway.toml" ]; then
+    echo "Initializing Railway project..."
+    railway init
+fi
 
 # Set environment variables
-echo "Setting environment variables..."
+echo "Setting basic environment variables..."
 railway variables set PORT=8000
-railway variables set NODE_ENV=production
+railway variables set RAILWAY_ENVIRONMENT=production
 
 # Deploy
 echo "Deploying to Railway..."
 railway up
 
-echo "✅ Deployment complete!"
 echo ""
-echo "📝 Next steps:"
-echo "1. Set your environment variables in Railway dashboard:"
-echo "   - OPENAI_API_KEY"
-echo "   - CLIO_CLIENT_ID" 
-echo "   - CLIO_CLIENT_SECRET"
-echo "   - SECRET_KEY"
+echo "✅ Deployment initiated!"
 echo ""
-echo "2. Update your Clio redirect URI with the Railway URL"
-echo "3. Test your application"
+echo "📝 Important next steps:"
+echo "1. Go to your Railway dashboard"
+echo "2. Set these environment variables:"
+echo "   - OPENAI_API_KEY=your_openai_key"
+echo "   - CLIO_CLIENT_ID=your_clio_client_id"
+echo "   - CLIO_CLIENT_SECRET=your_clio_client_secret"
+echo "   - SECRET_KEY=$(openssl rand -base64 32)"
+echo ""
+echo "3. Get your Railway URL from the dashboard"
+echo "4. Update Clio redirect URI: https://your-app.up.railway.app/callback"
+echo "5. Test your deployment at the Railway URL"
+echo ""
+echo "🔗 Railway Dashboard: https://railway.app/dashboard"
