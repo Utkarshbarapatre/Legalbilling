@@ -663,3 +663,11 @@ function checkExtensionStatus() {
 
 // Initialize the application
 const app = new LegalBillingApp()
+
+// Export the app class for Next.js import
+const data = {
+  LegalBillingApp,
+  checkExtensionStatus,
+}
+
+export default data
