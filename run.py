@@ -16,15 +16,9 @@ def main():
     # Get port from environment or use default
     port = int(os.getenv("PORT", 8000))
     
-    # Get redirect URI to determine host
-    redirect_uri = os.getenv("CLIO_REDIRECT_URI", "http://127.0.0.1:8000/callback")
-    
-    if "localhost" in redirect_uri:
-        host = "localhost"
-        server_url = f"http://localhost:{port}"
-    else:
-        host = "127.0.0.1"
-        server_url = f"http://127.0.0.1:{port}"
+    # Always use 127.0.0.1 for consistency
+    host = "127.0.0.1"
+    server_url = f"http://127.0.0.1:{port}"
     
     print("🚀 Starting Legal Billing Email Summarizer")
     print(f"📍 Server will run on: {server_url}")
@@ -32,7 +26,7 @@ def main():
     print(f"🔧 Health Check: {server_url}/health")
     print(f"🔗 OAuth Callback: {server_url}/callback")
     print(f"⚙️  Config Test: {server_url}/config-test")
-    print(f"🔄 Redirect URI: {redirect_uri}")
+    print(f"🔄 Redirect URI: http://127.0.0.1:{port}/callback")
     print("\n🔑 Configured APIs:")
     print(f"   • OpenAI: {'✓' if os.getenv('OPENAI_API_KEY') else '❌'}")
     print(f"   • Clio: {'✓' if os.getenv('CLIO_CLIENT_ID') else '❌'}")
