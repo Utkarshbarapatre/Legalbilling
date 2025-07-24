@@ -58,7 +58,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # OAuth callback route at root level to match Clio configuration
 @app.get("/callback")
 async def oauth_callback(code: str = None, error: str = None, db: Session = Depends(get_db)):
-    """Handle OAuth callback from Clio (matches redirect URI: http://127.0.0.1:8000/callback)"""
+    """Handle OAuth callback from Clio"""
     try:
         logger.info(f"OAuth callback received - code: {'present' if code else 'missing'}, error: {error}")
         
@@ -81,7 +81,7 @@ async def oauth_callback(code: str = None, error: str = None, db: Session = Depe
         clio_token = ClioToken(
             access_token=token_data['access_token'],
             refresh_token=token_data.get('refresh_token', ''),
-            expires_at=None  # Calculate from expires_in if provided
+            expires_at=None
         )
         db.add(clio_token)
         db.commit()
@@ -101,14 +101,47 @@ async def root():
             return HTMLResponse(content=f.read())
     except FileNotFoundError:
         return HTMLResponse(content="""
+        <!DOCTYPE html>
         <html>
-            <head><title>Legal Billing Email Summarizer</title></head>
+            <head>
+                <title>Legal Billing Email Summarizer</title>
+                <style>
+                    body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+                    .header { text-align: center; margin-bottom: 30px; }
+                    .status { background: #f0f9ff; border: 1px solid #0ea5e9; padding: 15px; border-radius: 8px; margin: 20px 0; }
+                    .links { display: flex; gap: 15px; justify-content: center; margin: 20px 0; }
+                    .links a { background: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+                    .links a:hover { background: #2563eb; }
+                </style>
+            </head>
             <body>
-                <h1>Legal Billing Email Summarizer</h1>
-                <p>Static files not found. Please ensure static/index.html exists.</p>
-                <p>API is running at <a href="/docs">/docs</a></p>
-                <p>OAuth callback: <a href="/callback">/callback</a></p>
-                <p>Clio Test: <a href="/clio-test">Clio Test Page</a></p>
+                <div class="header">
+                    <h1>⚖️ Legal Billing Email Summarizer</h1>
+                    <p>FastAPI backend is running successfully!</p>
+                </div>
+                
+                <div class="status">
+                    <h3>🚀 Application Status</h3>
+                    <p>✅ FastAPI server is running</p>
+                    <p>📁 Static files not found - using fallback interface</p>
+                    <p>🔗 API documentation available below</p>
+                </div>
+                
+                <div class="links">
+                    <a href="/docs">📚 API Documentation</a>
+                    <a href="/health">🔧 Health Check</a>
+                    <a href="/clio-test">🧪 Clio Test</a>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <h3>📋 Next Steps:</h3>
+                    <ol>
+                        <li>Upload your static files to the <code>static/</code> directory</li>
+                        <li>Configure your environment variables</li>
+                        <li>Test the API endpoints above</li>
+                        <li>Set up OAuth with Gmail and Clio</li>
+                    </ol>
+                </div>
             </body>
         </html>
         """)
@@ -120,7 +153,7 @@ async def clio_test():
         with open("static/clio-test.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except FileNotFoundError:
-        return HTMLResponse(content="<h1>Clio test page not found</h1>")
+        return HTMLResponse(content="<h1>Clio test page not found</h1><p><a href='/'>Back to home</a></p>")
 
 @app.get("/health")
 async def health_check():
@@ -129,27 +162,27 @@ async def health_check():
         "status": "healthy",
         "service": "Legal Billing Email Summarizer",
         "version": "1.0.0",
-        "port": settings.port,
-        "clio_redirect_uri": settings.clio_redirect_uri
+        "port": os.getenv("PORT", "8000"),
+        "environment": os.getenv("RAILWAY_ENVIRONMENT", "development")
     }
 
 @app.get("/config-test")
 async def config_test():
     """Test configuration endpoint"""
     return {
-        "openai_model": settings.openai_model,
-        "port": settings.port,
+        "openai_configured": bool(os.getenv("OPENAI_API_KEY")),
+        "clio_configured": bool(os.getenv("CLIO_CLIENT_ID")),
+        "port": os.getenv("PORT", "8000"),
+        "environment": os.getenv("RAILWAY_ENVIRONMENT", "development"),
         "database_url": settings.database_url,
-        "google_scopes": settings.google_scopes_list,
-        "clio_base_url": settings.clio_base_url,
-        "clio_redirect_uri": settings.clio_redirect_uri,
-        "clio_client_id": settings.clio_client_id[:10] + "..." if settings.clio_client_id else "Not set"
+        "clio_redirect_uri": settings.clio_redirect_uri
     }
 
 if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8000))
     uvicorn.run(
         "app.main:app",
-        host="127.0.0.1",
-        port=settings.port,
-        reload=True
+        host="0.0.0.0",
+        port=port,
+        reload=False
     )
